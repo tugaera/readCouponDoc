@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Read Coupons from Doc</title>
+</head>
+
+<body>
+    <textarea id="idTextArea" rows="4" cols="50"></textarea>
+    <br>
+    <form>
+        <input type="radio" name="tipo" value="c" checked> CSV<br>
+        <input type="radio" name="tipo" value="t"> TABLE<br>
+    </form>
+    <br>
+    OPTION: <input type="checkbox" id="idCheckBox"> With IMG
+    <br>
+    DATE <input type="date" id="idDate">
+    <br>
+    <button onclick="readTextArea(this)">Read TEXT</button>
+    <br>
+    <table id="idTable" border="1"></table>
+</body>
+<script src="readCouponDoc.js" charset="utf-8"></script>
+<script>
+    document.getElementById('idDate').valueAsDate = new Date();
+    var _file = ''; // Your File ID
+    var _api = ''; // Your Google API Key
+    const libRCD = new LibReadCouponDoc(_file, _api);
+    // console.log('libRCD: ',libRCD);
+
+function readTextArea(event) {
+    var tipo = document.querySelector('input[name="tipo"]:checked').value;
+    var data = document.getElementById("idTextArea").value;
+    var date = document.getElementById("idDate").value;
+    var meses = [
+        "Janeiro",
+        "Fevereiro",
+        "Março",
+        "Abril",
+        "Maio",
+        "Junho",
+        "Julho",
+        "Agosto",
+        "Setembro",
+        "Outubro",
+        "Novembro",
+        "Dezembro"
+    ];
+    var date1 = date.split('-')[2] + ' de ' + meses[Number(date.split('-')[1])-1];
+    var date2 = Number(date.split('-')[2])-1 + ' de ' + meses[Number(date.split('-')[1])-1];
+    console.log('date: ',date);
+    var table = null;
+    var img = document.getElementById("idCheckBox").checked;
+    if(!data || data == '') {
+        tipo = 'c';
+        data = libRCD.getFile(date1, date2);
+    }
+    // console.log('tipo: ',tipo);
+    switch(tipo) {
+        case 'c':
+            table = libRCD.readCSV(data, img);
+            console.log('table: ',table);
+            libRCD.createTable(table,'idTable', img);
+            break;
+        case 't':
+            table = libRCD.readTable(data);
+            console.log('table: ',table);
+            libRCD.createTable(table,'idTable', img);
+            break;
+        default:
+            console.log('default tipo: ',tipo);
+            alert('OPA');
+    }
+    
+
+}
+
+</script>
+
+</html>
