@@ -20,6 +20,49 @@
     <button onclick="readTextArea(this)">Read TEXT</button>
     <br>
     <table id="idTable" border="1"></table>
+    
+    <br>
+    <div style="float: left;">
+        <p>
+            Table Column
+        </p>
+        <ul id="sortable1" class="droptrue">
+            <li class="ui-state-default">A1_Item</li>
+            <li class="ui-state-default">A2_Item</li>
+            <li class="ui-state-default">A3_Item</li>
+            <li class="ui-state-default">A4_Item</li>
+            <li class="ui-state-default">A5_Item</li>
+        </ul>
+    </div>
+    
+    <div style="float: left;">
+        <p>
+            EXTRA FIELDS
+        </p>
+        <ul id="sortable2" class="dropfalse">
+            <li class="ui-state-highlight">B1_Item</li>
+            <li class="ui-state-highlight">B2_Item</li>
+            <li class="ui-state-highlight">B3_Item</li>
+            <li class="ui-state-highlight">B4_Item</li>
+            <li class="ui-state-highlight">B5_Item</li>
+        </ul>
+    </div>
+    
+    <div style="float: left;">
+        <p>
+            NULL list
+        </p>
+        <ul id="sortable3" class="droptrue">
+        </ul>
+    </div>
+    
+       
+    <br style="clear:both">
+    <div style="margin-top: 50px;">
+        List1: <span id="list1"></span> <br>
+        List2: <span id="list2"></span> <br>
+        List3: <span id="list3"></span> <br>
+    </div>
 </body>
 <script src="readCouponDoc.js" charset="utf-8"></script>
 <script>
@@ -77,5 +120,59 @@ function readTextArea(event) {
 }
 
 </script>
+
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script>
+    $( function() {
+        $( "ul.droptrue" ).sortable({
+            connectWith: "ul",
+            update: function(event, ui) {
+                updateList(event, ui); //Update the PRINT list 
+            }
+        });
+
+        $( "ul.dropfalse" ).sortable({
+            connectWith: "ul",
+            dropOnEmpty: false
+        });
+
+        $( "#sortable1, #sortable2, #sortable3" ).disableSelection();
+    } );
+  
+    /**
+    * updateList ( event, ui )
+    * print the ordered list
+    */
+    function updateList ( event, ui ) {
+        var dataList = null;
+        dataList = $("ul#sortable1 li").map(function() {
+            return this.textContent.trim();
+        }).get();
+        document.getElementById("list1").innerHTML = dataList.join(", ");
+
+        dataList = $("ul#sortable2 li").map(function() {
+            return this.textContent.trim();
+        }).get();
+        document.getElementById("list2").innerHTML = dataList.join(", ");
+
+        dataList = $("ul#sortable3 li").map(function() {
+            return this.textContent.trim();
+        }).get();
+        document.getElementById("list3").innerHTML = dataList.join(", ");
+    }
+</script>
+<style>
+    #sortable1, #sortable2, #sortable3 { list-style-type: none; margin: 0; float: left; margin-right: 10px; background: #eee; padding: 5px; width: 143px;}
+    #sortable1 li, #sortable2 li, #sortable3 li { margin: 5px; padding: 5px; font-size: 1.2em; width: 120px; }
+    #sortable1 li, #sortable2 li, #sortable3 li { 
+      cursor: move; 
+      border: 1px solid;
+      border-radius: 5px;
+      border-style: dashed;
+      background-color: lightgray;
+    }
+    
+</style>
 
 </html>
