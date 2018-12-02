@@ -26,26 +26,14 @@
         <p>
             Table Column
         </p>
-        <ul id="sortable1" class="droptrue">
-            <li class="ui-state-default">A1_Item</li>
-            <li class="ui-state-default">A2_Item</li>
-            <li class="ui-state-default">A3_Item</li>
-            <li class="ui-state-default">A4_Item</li>
-            <li class="ui-state-default">A5_Item</li>
-        </ul>
+        <ul id="sortable1" class="droptrue"></ul>
     </div>
     
     <div style="float: left;">
         <p>
             EXTRA FIELDS
         </p>
-        <ul id="sortable2" class="dropfalse">
-            <li class="ui-state-highlight">B1_Item</li>
-            <li class="ui-state-highlight">B2_Item</li>
-            <li class="ui-state-highlight">B3_Item</li>
-            <li class="ui-state-highlight">B4_Item</li>
-            <li class="ui-state-highlight">B5_Item</li>
-        </ul>
+        <ul id="sortable2" class="dropfalse"></ul>
     </div>
     
     <div style="float: left;">
@@ -124,11 +112,31 @@ function readTextArea(event) {
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script>
+    var headerSort = ['categoria','comeca','termina','sku','produto','link','armazem','preco','cupao','quantidade','img'];
+    var headerSortAux = ['LIXO_1','LIXO_2','LIXO_3','LIXO_4'];
+    const app = this;
+
+    var listView;
+    listView=document.getElementById('sortable1');
+    for(var i=0;i<headerSort.length;i++) {
+        var listViewItem=document.createElement('li');
+        listViewItem.appendChild(document.createTextNode(headerSort[i]));
+        listView.appendChild(listViewItem);
+    }
+
+    listView=document.getElementById('sortable2');
+    for(var i=0;i<headerSortAux.length;i++) {
+        var listViewItem=document.createElement('li');
+        listViewItem.appendChild(document.createTextNode(headerSortAux[i]));
+        listView.appendChild(listViewItem);
+    }
+
     $( function() {
+        
         $( "ul.droptrue" ).sortable({
             connectWith: "ul",
             update: function(event, ui) {
-                updateList(event, ui); //Update the PRINT list 
+                app.updateList(event, ui); //Update the PRINT list 
             }
         });
 
@@ -150,6 +158,7 @@ function readTextArea(event) {
             return this.textContent.trim();
         }).get();
         document.getElementById("list1").innerHTML = dataList.join(", ");
+        libRCD.header=dataList;
 
         dataList = $("ul#sortable2 li").map(function() {
             return this.textContent.trim();

@@ -1,8 +1,24 @@
-var XMLHttpRequest = XMLHttpRequest;
-'use strict';
+//var XMLHttpRequest = XMLHttpRequest;
+//'use strict';
+
+class rowDoc {
+    constructor() {
+        this.categoria = null;
+        this.comeca = null;
+        this.termina = null;
+        this.sku = null;
+        this.produto = null;
+        this.link = null;
+        this.armazem = null;
+        this.preco = null;
+        this.cupao = null;
+        this.unidades = null;
+        this.img = null;
+    }
+}
 
 class LibReadCouponDoc {
-    constructor(_file, _api) {
+    constructor(_file, _api, _header = null) {
         this._file = _file;
         this._api = _api;
         var _type = 'text/csv';
@@ -11,6 +27,7 @@ class LibReadCouponDoc {
         this._url = _url;
         var _data = null;
         this._data = _data;
+        this._header = _header;
     }
     
     set url(url) {
@@ -25,12 +42,16 @@ class LibReadCouponDoc {
         return this._data;
     }
 
+    set header(header) {
+        this._header = header;
+    }
+
     /**
-     * 
+     * getFile()
      * @param {*} date1 
      * @param {*} date2 
      */
-    getFile(date1, date2, ) {
+    getFile(date1, date2 ) {
         const url = this.url + this._file + '/export?key=' + this._api+ '&mimeType='+this._type;
         const xmlhttp=new XMLHttpRequest();
         xmlhttp.open("GET", url, false);
@@ -129,18 +150,13 @@ class LibReadCouponDoc {
             var data = allTextLines[i].split(',');
             if (data.length == headers.length) {
                 var row = new rowDoc();
-                /* var tarr = [];
-                for (var j=0; j<headers.length; j++) {
-                    tarr.push(/* headers[j]+":"+ * /data[j]);
-                }
-                lines.push(tarr); */
                 for(var _i=0; _i<headers.length; _i++) {
-                    // row.push(headers[x]);
-                    if(_i <= 8 && data[_i] !== '')
-                        row[Object.keys(row)[_i]] = data[_i];
-                    else if(img && _i == 9 && row.link)
-                        row.img = this.getImage(row.link);
+                    let column = this._header[x];
+                    if(cells[x] != null && typeof cells[x] == "string" && cells[x] !== '' && typeof row["column"] == "undefined")
+                        row[column] = cells[x];
                 }
+                if(img && row.link != null)
+                    row.img = this.getImage(row.link);
                 lines.push(row);
             }
         }
@@ -153,42 +169,30 @@ class LibReadCouponDoc {
      * @param {*} img 
      */
     readTable(data, img = false) {
-        var rows = data.split("\n");
-        var table = [];
-        for(var y in rows) {
-            var cells = rows[y].split("\t");
-            var row = new rowDoc();
-            var _i=0;
-            var flag = true;
-            for(var x in cells) {
-                // row.push(cells[x]);
-                if(_i <= 8 && cells[x] !== '')
-                    row[Object.keys(row)[_i]] = cells[x];
-                else if(img && _i == 9 && row.link)
-                    row.img = this.getImage(row.link);
-                _i++;
+        let rows = data.split("\n");
+        let table = [];
+        for(let y in rows) {
+            let cells = rows[y].split("\t");
+            let row = new rowDoc();
+            let flag = true;
+            for(let x in cells) {
+                let column = this._header[x];
+                if(cells[x] != null && typeof cells[x] == "string" && cells[x] !== '' && typeof row["column"] == "undefined")
+                    row[column] = cells[x];
             }
+            if(img && row.link != null)
+                row.img = this.getImage(row.link);
+
             if(flag)
                 table.push(row);
         }
         return table;
     }
 }
-// export default MyLib;
-/* const instance = new MyLib();
-export { instance as MyLib }; */
 
-class rowDoc {
-    constructor() {
-        this.comeca = null;
-        this.termina = null;
-        this.sku = null;
-        this.produto = null;
-        this.link = null;
-        this.armazem = null;
-        this.preco = null;
-        this.cupao = null;
-        this.unidades = null;
-        this.img = null;
-    }
-}
+//export default LibReadCouponDoc;
+/*const instance = new LibReadCouponDoc();
+export { instance as LibReadCouponDoc };*/
+//exports.default = LibReadCouponDoc;
+exports.LibReadCouponDoc = LibReadCouponDoc;
+
